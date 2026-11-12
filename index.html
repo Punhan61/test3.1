@@ -1,483 +1,483 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таймер интервальной тренировки</title>
-    <style>
-        :root {
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --work-color: #10b981;
-            --rest-color: #f59e0b;
-            --danger: #ef4444;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Таймер интервальной тренировки</title>
+  <style>
+    :root {
+      --bg: #0f1420;
+      --card: #1b2333;
+      --text: #eef1f7;
+      --muted: #9aa3b5;
+      --accent: #4f8cff;
+      --work: #ff5a5f;
+      --rest: #2fd07a;
+      --error: #ff6b6b;
+      --radius: 16px;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            line-height: 1.5;
-        }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(160deg, #0f1420 0%, #1a2236 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+    }
 
-        header {
-            text-align: center;
-            padding: 2rem 1rem 1rem;
-        }
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
 
-        header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
+    header h1 {
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      font-weight: 700;
+    }
 
-        main {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
 
-        .card {
-            background: var(--card-bg);
-            width: 100%;
-            max-width: 420px;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-        }
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
 
-        /* Настройки */
-        .settings-grid {
-            display: grid;
-            gap: 1.25rem;
-            margin-bottom: 1.5rem;
-        }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      padding: 28px 24px;
+    }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
+    .field {
+      margin-bottom: 16px;
+    }
 
-        .input-group label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
 
-        .input-group input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1.5px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 1rem;
-            color: var(--text-main);
-            transition: border-color 0.2s, box-shadow 0.2s;
-            outline: none;
-        }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      color: var(--text);
+      background: #131a29;
+      border: 1px solid #2b354d;
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
 
-        .input-group input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
+    input:focus {
+      border-color: var(--accent);
+    }
 
-        .error-message {
-            color: var(--danger);
-            font-size: 0.875rem;
-            background-color: #fef2f2;
-            border: 1px solid #fecaca;
-            padding: 0.75rem;
-            border-radius: 10px;
-            margin-bottom: 1.25rem;
-            display: none;
-        }
+    input.invalid {
+      border-color: var(--error);
+    }
 
-        /* Экран активного таймера */
-        .timer-display {
-            display: none;
-            text-align: center;
-            padding: 1rem 0 1.5rem;
-        }
+    .error {
+      display: none;
+      color: var(--error);
+      font-size: 0.85rem;
+      margin-top: 6px;
+    }
 
-        .phase-badge {
-            display: inline-block;
-            padding: 0.35rem 1rem;
-            border-radius: 999px;
-            font-size: 0.875rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
-        }
+    .error.visible {
+      display: block;
+    }
 
-        .phase-work {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
 
-        .phase-rest {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
+    button:hover {
+      background: #3f7bef;
+    }
 
-        .phase-done {
-            background-color: #dbeafe;
-            color: #1e40af;
-        }
+    button:active {
+      transform: scale(0.98);
+    }
 
-        .time-value {
-            font-size: 4.5rem;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-            margin: 0.5rem 0;
-            letter-spacing: -0.03em;
-        }
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
 
-        .round-info {
-            font-size: 1rem;
-            color: var(--text
+    .controls .stop {
+      background: transparent;
+      border: 1px solid #2b354d;
+      color: var(--muted);
+    }
 
+    .controls .stop:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
 
-);
-            font-weight: 500;
-            margin-top: 0.75rem;
-        }
+    /* Экран таймера */
+    .timer-screen {
+      display: none;
+      text-align: center;
+    }
 
-        /* Кнопки */
-        .controls {
-            display: flex;
-            gap: 0.75rem;
-        }
+    .timer-screen.visible {
+      display: block;
+    }
 
-        button {
-            flex: 1;
-            padding: 0.875rem 1.25rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-        }
+    .phase {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
 
-        button:active {
-            transform: scale(0.98);
-        }
+    .phase.work { color: var(--work); }
+    .phase.rest { color: var(--rest); }
 
-        .btn-primary {
-            background-color: var(--primary);
-            color: #ffffff;
-        }
+    .ring {
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #131a29;
+      border: 6px solid var(--accent);
+      transition: border-color 0.3s;
+    }
 
-        .btn-primary:hover {
-            background-color: var(--primary-hover);
-        }
+    .ring.work { border-color: var(--work); }
+    .ring.rest { border-color: var(--rest); }
 
-        .btn-secondary {
-            background-color: #f1f5f9;
-            color: var(--text-main);
-        }
+    .time {
+      font-size: 3rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
 
-        .btn-secondary:hover {
-            background-color: #e2e8f0;
-        }
+    .round {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
 
-        footer {
-            text-align: center;
-            padding: 1.5rem 1rem;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-        }
+    .total {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
 
-        max-width: 480px {
-            .card {
-                padding: 1.5rem;
-                border-radius: 16px;
-            }
-            .time-value {
-                font-size: 3.75rem;
-            }
-        }
-    </style>
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 400px) {
+      .card {
+        padding: 22px 18px;
+      }
+      .ring {
+        width: 170px;
+        height: 170px;
+      }
+      .time {
+        font-size: 2.6rem;
+      }
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>Таймер интервальной тренировки</h1>
+    <p>Работа — отдых — раунды. Настрой и жми «Старт»</p>
+  </header>
 
-    <header>
-        <h1>Таймер интервальной тренировки</h1>
-    </header>
+  <main>
+    <section class="card">
 
-    <main>
-        <section class="card" aria-label="Управление тренировкой">
-            <!-- Блок ошибок -->
-            <div id="errorBox" class="error-message" role="alert"></div>
+      <!-- Экран настройки -->
+      <form id="setup" novalidate>
+        <div class="field">
+          <label for="workTime">Время работы, сек</label>
+          <input type="number" id="workTime" inputmode="numeric" min="1" placeholder="Например, 45" autocomplete="off">
+          <p class="error" id="workTimeError"></p>
+        </div>
 
-            <!-- Форма настроек -->
-            <form id="settingsForm" novalidate>
-                <div class="settings-grid">
-                    <div class="input-group">
-                        <label for="workInput">Время работы (секунды)</label>
-                        <input type="number" id="workInput" value="30" min="1" step="1" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="restInput">Время отдыха (секунды)</label>
-                        <input type="number" id="restInput" value="15" min="0" step="1" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="roundsInput">Количество раундов</label>
-                        <input type="number" id="roundsInput" value="5" min="1" step="1" required>
-                    </div>
-                </div>
-                <div class="controls">
-                    <button type="submit" class="btn-primary">Начать тренировку</button>
-                </div>
-            </form>
+        <div class="field">
+          <label for="restTime">Время отдыха, сек</label>
+          <input type="number" id="restTime" inputmode="numeric" min="1" placeholder="Например, 15" autocomplete="off">
+          <p class="error" id="restTimeError"></p>
+        </div>
 
-            <!-- Экран таймера -->
-            <div id="timerScreen" class="timer-display">
-                <div id="phaseBadge" class="phase-badge phase-work">Работа</div>
-                <div id="timeDisplay" class="time-value">00:30</div>
-                <div id="roundDisplay" class="round-info">Раунд 1 из 5</div>
-                
-                <div class="controls" style="margin-top: 2rem;">
-                    <button type="button" id="pauseBtn" class="btn-primary">Пауза</button>
-                    <button type="button" id="resetBtn" class="btn-secondary">Сброс</button>
-                </div>
-            </div>
-        </section>
-    </main>
+        <div class="field">
+          <label for="rounds">Количество раундов</label>
+          <input type="number" id="rounds" inputmode="numeric" min="1" placeholder="Например, 8" autocomplete="off">
+          <p class="error" id="roundsError"></p>
+        </div>
 
-    <footer>
-        <p>Интервальный таймер &copy; 2026</p>
-    </footer>
+        <button type="submit">Старт</button>
+      </form>
 
-    <script>
-        (function () {
-            // Элементы DOM
-            const settingsForm = document.getElementById('settingsForm');
-            const timerScreen = document.getElementById('timerScreen');
-            const errorBox = document.getElementById('errorBox');
+      <!-- Экран таймера -->
+      <div class="timer-screen" id="timerScreen" aria-live="polite">
+        <p class="phase" id="phase">Работа</p>
 
-            const workInput = document.getElementById('workInput');
-            const restInput = document.getElementById('restInput');
-            const roundsInput = document.getElementById('roundsInput');
+        <div class="ring" id="ring">
+          <div class="time" id="time">00:00</div>
+          <div class="round" id="round"></div>
+        </div>
 
-            const phaseBadge = document.getElementById('phaseBadge');
-            const timeDisplay = document.getElementById('timeDisplay');
-            const roundDisplay = documen
+        <p class="total" id="total"></p>
 
+        <div class="controls">
+          <button type="button" id="pauseBtn">Пауза</button>
+          <button type="button" class="stop" id="stopBtn">Сброс</button>
+        </div>
+      </div>
 
-t.getElementById('roundDisplay');
+    </section>
+  </main>
 
-            const pauseBtn = document.getElementById('pauseBtn');
-            const resetBtn = document.getElementById('resetBtn');
+  <footer>
+    Сигналы — через звук браузера. Не закрывай вкладку во время тренировки.
+  </footer>
 
-            // Состояние таймера
-            let config = { work: 30, rest: 15, rounds: 5 };
-            let currentRound = 1;
-            let currentPhase = 'work'; // 'work' | 'rest' | 'done'
-            let timeLeft = 0;
-            let timerId = null;
-            let isPaused = false;
+  <script>
+    const setupForm = document.getElementById('setup');
+    const timerScreen = document.getElementById('timerScreen');
 
-            // Встроенный звуковой сигнал (Web Audio API, без внешних файлов)
-            function playBeep(freq = 600, duration = 0.15) {
-                try {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.start();
-                    osc.stop(ctx.currentTime + duration);
-                } catch (e) {
-                    // Игнорируем ошибку, если браузер заблокировал аудио
-                }
+    const workInput = document.getElementById('workTime');
+    const restInput = document.getElementById('restTime');
+    const roundsInput = document.getElementById('rounds');
+
+    const phaseEl = document.getElementById('phase');
+    const timeEl = document.getElementById('time');
+    const roundEl = document.getElementById('round');
+    const totalEl = document.getElementById('total');
+    const ringEl = document.getElementById('ring');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const stopBtn = document.getElementById('stopBtn');
+
+    let config = null;   // { work, rest, rounds }
+    let state = null;    // текущее состояние таймера
+    let tickId = null;
+
+    // ---------- Валидация ----------
+
+    function showError(input, errorEl, message) {
+      input.classList.add('invalid');
+      errorEl.textContent = message;
+      errorEl.classList.add('visible');
+    }
+
+    function clearError(input, errorEl) {
+      input.classList.remove('invalid');
+      errorEl.textContent = '';
+      errorEl.classList.remove('visible');
+    }
+
+    function validate(input, errorEl) {
+      const raw = input.value.trim();
+      if (raw === '') {
+        showError(input, errorEl, 'Заполните это поле');
+        return null;
+      }
+      const num = Number(raw);
+      if (Number.isNaN(num)) {
+        showError(input, errorEl, 'Введите число');
+        return null;
+      }
+      if (num <= 0) {
+        showError(input, errorEl, 'Значение должно быть больше нуля');
+        return null;
+      }
+      if (!Number.isInteger(num)) {
+        showError(input, errorEl, 'Введите целое число секунд');
+        return null;
+      }
+      clearError(input, errorEl);
+      return num;
+    }
+
+    [workInput, restInput, roundsInput].forEach((input, i) => {
+      const errorEl = document.getElementById(input.id + 'Error');
+      input.addEventListener('input', () => clearError(input, errorEl));
+    });
+
+    // ---------- Звук ----------
+
+    let audioCtx = null;
+
+    function beep(frequency = 880, duration = 0.2) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.value = frequency;
+        osc.type = 'sine';
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // Без звука таймер всё равно работает
+      }
+    }
+
+    // ---------- Формат времени ----------
+
+    function formatTime(totalSeconds) {
+      const m = Math.floor(totalSeconds / 60);
+      const s = totalSeconds % 60;
+      return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+
+    // ---------- Логика таймера ----------
+
+    setupForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const work = validate(workInput, document.getElementById('workTimeError'));
+      const rest = validate(restInput, document.getElementById('restTimeError'));
+      const rounds = validate(roundsInput, document.getElementById('roundsError'));
+
+      if (work === null || rest === null || rounds === null) return;
+
+      config = { work, rest, rounds };
+      state = {
+        phase: 'work',   // 'work' | 'rest'
+        secondsLeft: work,
+        round: 1,
+        paused: false
+      };
+
+      setupForm.style.display = 'none';
+      timerScreen.classList.add('visible');
+      pauseBtn.textContent = 'Пауза';
+      render();
+      startTicking();
+    });
+
+    function render() {
+      const isWork = state.phase === 'work';
+      phaseEl.textContent = isWork ? 'Работа' : 'Отдых';
+      phaseEl.className = 'phase ' + (isWork ? 'work' : 'rest');
+      ringEl.className = 'ring ' + (isWork ? 'work' : 'rest');
+      timeEl.textContent = formatTime(state.secondsLeft);
+      roundEl.textContent = 'Раунд ' + state.round + ' из ' + config.rounds;
+      totalEl.textContent = 'Всего раундов: ' + config.rounds +
+        ' · вся тренировка: ' + formatTime((config.work + config.rest) * config.rounds);
+    }
+
+    function startTicking() {
+      clearInterval(tickId);
+      tickId = setInterval(() => {
+        if (state.paused) return;
+
+        state.secondsLeft--;
+
+        // Сигнал за 3, 2, 1 секунду до конца фазы
+        if (state.secondsLeft > 0 && state.secondsLeft <= 3) beep(660, 0.15);
+
+        if (state.secondsLeft <= 0) {
+          if (state.phase === 'work') {
+            state.phase = 'rest';
+            state.secondsLeft = config.rest;
+            beep(880, 0.35);
+          } else {
+            if (state.round >= config.rounds) {
+              finish();
+              return;
             }
+            state.phase = 'work';
+            state.round++;
+            state.secondsLeft = config.work;
+            beep(1100, 0.35);
+          }
+        }
 
-            // Валидация полей
-            function validateInputs() {
-                const workRaw = workInput.value.trim();
-                const restRaw = restInput.value.trim();
-                const roundsRaw = roundsInput.value.trim();
+        render();
+      }, 1000);
+    }
 
-                if (workRaw === '' || restRaw === '' || roundsRaw === '') {
-                    return 'Пожалуйста, заполните все поля перед запуском.';
-                }
+    function finish() {
+      clearInterval(tickId);
+      tickId = null;
+      phaseEl.textContent = 'Готово!';
+      phaseEl.className = 'phase';
+      timeEl.textContent = '💪';
+      roundEl.textContent = 'Тренировка завершена';
+      pauseBtn.textContent = 'Старт';
+      beep(1200, 0.4);
+      setTimeout(() => beep(1500, 0.5), 350);
+    }
 
-                const work = Number(workRaw);
-                const rest = Number(restRaw);
-                const rounds = Number(roundsRaw);
+    pauseBtn.addEventListener('click', () => {
+      if (!state) return;
+      if (phaseEl.textContent === 'Готово!') {
+        // Кнопка работает как «Старт» после завершения
+        setupForm.style.display = '';
+        timerScreen.classList.remove('visible');
+        state = null;
+        return;
+      }
+      state.paused = !state.paused;
+      pauseBtn.textContent = state.paused ? 'Продолжить' : 'Пауза';
+    });
 
-                if (isNaN(work) || isNaN(rest) || isNaN(rounds)) {
-                    return 'Вводите только корректные числовые значения.';
-                }
+    stopBtn.addEventListener('click', () => {
+      clearInterval(tickId);
+      tickId = null;
+      state = null;
+      setupForm.style.display = '';
+      timerScreen.classList.remove('visible');
+      phaseEl.className = 'phase';
+    });
 
-                if (!Number.isInteger(work) || !Number.isInteger(rest) || !Number.isInteger(rounds)) {
-                    return 'Используйте только целые числа.';
-                }
-
-                if (work <= 0) {
-                    return 'Время работы должно быть больше 0 секунд.';
-                }
-
-                if (rest < 0) {
-                    return 'Время отдыха не может быть отрицательным.';
-                }
-
-                if (rounds <= 0) {
-                    return 'Количество раундов должно быть не меньше 1.';
-                }
-
-                config = { work, rest, rounds };
-                return null;
-            }
-
-            function showError(message) {
-                errorBox.textContent = message;
-                errorBox.style.display = 'block';
-            }
-
-            function hideError() {
-                errorBox.style.display = 'none';
-                errorBox.textContent = '';
-            }
-
-            function formatTime(seconds) {
-                const mins = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-            }
-
-            function updateUI() {
-                timeDisplay.textContent = formatTime(timeLeft);
-
-                if (currentPhase === 'work') {
-                    phaseBadge.textContent = 'Работа';
-                    phaseBadge.className = 'phase-badge phase-work';
-                    roundDisplay.textContent = `Раунд ${currentRound} из ${config.rounds}`;
-                } else if (currentPhase === 'rest') {
-                    phaseBadge.textContent = 'Отдых';
-                    phaseBadge.className = 'phase-badge phase-rest';
-                    roundDisplay.textContent = `Раунд ${currentRound} из ${config.rounds}`;
-                } else {
-                    phaseBadge.textContent = 'Финиш';
-                    phaseBadge.className = 'phase-badge ph
-
-
-ase-done';
-                    roundDisplay.textContent = 'Тренировка завершена!';
-                }
-            }
-
-            function finishWorkout() {
-                clearInterval(timerId);
-                timerId = null;
-                currentPhase = 'done';
-                timeLeft = 0;
-                pauseBtn.style.display = 'none';
-                updateUI();
-                playBeep(880, 0.4);
-            }
-
-            function tick() {
-                if (isPaused) return;
-
-                if (timeLeft > 1) {
-                    timeLeft--;
-                    if (timeLeft <= 3) playBeep(440, 0.08);
-                    updateUI();
-                } else {
-                    // Переключение фаз
-                    if (currentPhase === 'work') {
-                        if (currentRound >= config.rounds) {
-                            finishWorkout();
-                            return;
-                        }
-                        if (config.rest > 0) {
-                            currentPhase = 'rest';
-                            timeLeft = config.rest;
-                            playBeep(520, 0.2);
-                        } else {
-                            currentRound++;
-                            timeLeft = config.work;
-                            playBeep(700, 0.2);
-                        }
-                    } else if (currentPhase === 'rest') {
-                        currentRound++;
-                        currentPhase = 'work';
-                        timeLeft = config.work;
-                        playBeep(700, 0.2);
-                    }
-                    updateUI();
-                }
-            }
-
-            // Запуск тренировки
-            settingsForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const error = validateInputs();
-                if (error) {
-                    showError(error);
-                    return;
-                }
-
-                hideError();
-                currentRound = 1;
-                currentPhase = 'work';
-                timeLeft = config.work;
-                isPaused = false;
-
-                pauseBtn.style.display = 'inline-block';
-                pauseBtn.textContent = 'Пауза';
-                settingsForm.style.display = 'none';
-                timerScreen.style.display = 'block';
-
-                updateUI();
-                playBeep(700, 0.2);
-
-                clearInterval(timerId);
-                timerId = setInterval(tick, 1000);
-            });
-
-            // Пауза / Продолжить
-            pauseBtn.addEventListener('click', function () {
-                isPaused = !isPaused;
-                pauseBtn.textContent = isPaused ? 'Продолжить' : 'Пауза';
-            });
-
-            // Сброс к настройкам
-            resetBtn.addEventListener('click', function () {
-                clearInterval(timerId);
-                timerId = null;
-                isPaused = false;
-                timerScreen.style.display = 'none';
-                settingsForm.style.display = 'block';
-                hideError();
-            });
-        })();
-    </script>
+    [workInput, restInput, roundsInput].forEach(input => {
+      input.addEventListener('input', () => {
+        const errorEl = document.getElementById(input.id + 'Error');
+        clearError(input, errorEl);
+      });
+    });
+  </script>
 </body>
-</html>-muted
+</html>
